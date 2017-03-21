@@ -27,7 +27,7 @@ if __name__ == "__main__":
 			dirName = "Filtered_Dataset"
 			# check for its existence
 			if not os.path.isdir(dirName):
-				os.mkdir(dirName)
+				os.mkdir('../../'+dirName)
 			ratings = []
 			reviewTexts = []
 			summaries = []
@@ -49,14 +49,18 @@ if __name__ == "__main__":
 					else:
 						print "Working on ... ",product_id
 						count += 1
+						"""
 						# write all the contents into files
 						if not os.path.isdir(dirName+'/'+product_id):
 							os.mkdir(dirName+'/'+product_id)
 						# opening the file in append mode will handle they case if file in not present
 						file1 = open(dirName+'/'+product_id+'/'+'ratings.txt','a')
-						file1.write(str(ratings))
+						"""
+						file1 = open('../../'+dirName+'/'+product_id+'.txt','a')
+						for i in range(len(ratings)):
+							file1.write("%s\n%.2f\n%s\n\n"%(summaries[i],ratings[i],reviewTexts[i]))
 						file1.close()
-
+						"""
 						file2 = open(dirName+'/'+product_id+'/'+'reviewTexts.txt','a')
 						file2.write(str(reviewTexts))
 						file2.close()
@@ -64,7 +68,7 @@ if __name__ == "__main__":
 						file3 = open(dirName+'/'+product_id+'/'+'summaries.txt','a')
 						file3.write(str(summaries))
 						file3.close()
-
+						"""
 						# reset the current buffers and set id to current id
 						ratings, reviewTexts, summaries = [],[],[]
 						product_id = one_object['asin']
@@ -74,6 +78,7 @@ if __name__ == "__main__":
 				print "Working on ... ",product_id
 				count += 1
 
+				"""
 				if not os.path.isdir(dirName+'/'+product_id):
 					os.mkdir(dirName+'/'+product_id)
 
@@ -88,6 +93,11 @@ if __name__ == "__main__":
 				file3 = open(dirName+'/'+product_id+'/'+'summaries.txt','a')
 				file3.write(str(summaries))
 				file3.close()
+				"""
+				file1 = open('../../'+dirName+'/'+product_id+'.txt','a')
+				for i in range(len(ratings)):
+					file1.write("%s\n%.2f\n%s\n\n"%(summaries[i],ratings[i],reviewTexts[i]))
+				file1.close()
 
 		else:
 			print "Couldn't find the dataset!"
