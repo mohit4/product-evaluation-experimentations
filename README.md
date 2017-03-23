@@ -7,8 +7,15 @@ Product Evaluation Engine is a set of scripts processing the collected online re
   2. Review Summarization
   3. Feature Extraction
 
-### Status
+***
+
+### Project Status
 _Currently working on these algorithms_
-- [x] Dataset filtered
-- [ ] Tokenization and tagging
-- [ ] Stemming
+
+Functionality | Status
+------------- | ------
+Filtering     | Done
+Tokenization and tagging | -
+Stemming | -
+
+***
