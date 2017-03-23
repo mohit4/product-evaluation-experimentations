@@ -3,7 +3,6 @@
 This script inputs the dataset as compressed .tar.gz file and adds it to the directory with
 understandable format.
 
-
 Friday 17 March 2017 09:19:14 AM IST
 
 """
@@ -26,7 +25,7 @@ if __name__ == "__main__":
 			# extract the firstName of the dataset only
 			dirName = "Filtered_Dataset"
 			# check for its existence
-			if not os.path.isdir(dirName):
+			if not os.path.isdir('../../'+dirName):
 				os.mkdir('../../'+dirName)
 			ratings = []
 			reviewTexts = []
@@ -56,9 +55,8 @@ if __name__ == "__main__":
 						# opening the file in append mode will handle they case if file in not present
 						file1 = open(dirName+'/'+product_id+'/'+'ratings.txt','a')
 						"""
-						file1 = open('../../'+dirName+'/'+product_id+'.txt','a')
-						for i in range(len(ratings)):
-							file1.write("%s\n%.2f\n%s\n\n"%(summaries[i],ratings[i],reviewTexts[i]))
+						file1 = open('../../'+dirName+'/'+product_id+'.txt','w')
+						file1.write(str(summaries)+'\n'+str(ratings)+'\n'+str(reviewTexts))
 						file1.close()
 						"""
 						file2 = open(dirName+'/'+product_id+'/'+'reviewTexts.txt','a')
@@ -94,9 +92,8 @@ if __name__ == "__main__":
 				file3.write(str(summaries))
 				file3.close()
 				"""
-				file1 = open('../../'+dirName+'/'+product_id+'.txt','a')
-				for i in range(len(ratings)):
-					file1.write("%s\n%.2f\n%s\n\n"%(summaries[i],ratings[i],reviewTexts[i]))
+				file1 = open('../../'+dirName+'/'+product_id+'.txt','w')
+				file1.write(str(summaries)+'\n'+str(ratings)+'\n'+str(reviewTexts))
 				file1.close()
 
 		else:
