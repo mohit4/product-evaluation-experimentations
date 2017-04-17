@@ -10,12 +10,18 @@ Product Evaluation Engine is a set of scripts processing the collected online re
 ***
 
 ### Project Status
-_Currently working on these algorithms_
+_Worked on these algorithms_
 
 Functionality | Status
 ------------- | ------
 Filtering     | Done
-Tokenization and tagging | -
-Stemming | -
+Tokenization and tagging | Done
+Lemmatization | Done
 
 ***
+
+### Current interest
+
+1. Sentence classifier based on classification algorithms, using dedicated ML libraries such as tensorflow
+or using nltk algorithm libraries.
+2. Web application
