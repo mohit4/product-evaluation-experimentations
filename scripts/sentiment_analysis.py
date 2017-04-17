@@ -26,7 +26,7 @@ all_words_neg = sentiment_analyzer.all_words([mark_negation(doc) for doc in trai
 
 # handling negations using simple unigram word features
 unigram_feats = sentiment_analyzer.unigram_word_feats(all_words_neg, min_freq=4)
-sentiment_analyzer.add_feat_extractor(extract_unigram_feats, unigram=unigram_feats)
+sentiment_analyzer.add_feat_extractor(extract_unigram_feats, unigrams=unigram_feats)
 
 # features are applied to obtain a feature value representation of the dataset
 training_set = sentiment_analyzer.apply_features(training_docs)
