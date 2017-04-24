@@ -5,6 +5,7 @@ This script is working...
 import nltk
 from nltk.tokenize import WordPunctTokenizer as WPT
 from nltk import NaiveBayesClassifier as NBC
+import pickle
 
 # word tokenizer to extract punctuations as words
 wpt = WPT()
@@ -20,6 +21,13 @@ all_words = []
 
 # set of feature words feeding to the classifier
 word_features = []
+
+# to save the classifier for later use
+def save_classifier(classifier):
+    f = open('naive_bayes_classifier.pickle','wb')
+    pickle.dump(classifier,f)
+    f.close()
+    print "classifier saved!"
 
 # filtering out the unneccessary words
 def feature_filter(list_of_words):
@@ -82,6 +90,10 @@ if __name__ == "__main__":
 
     # most informative features
     classifier.show_most_informative_features(100)
+
+    # saving classifier
+    print "saving classifier..."
+    save_classifier(classifier)
 
     # done
     print "Done!"
