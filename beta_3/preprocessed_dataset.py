@@ -39,13 +39,11 @@ from nltk.tokenize import WordPunctTokenizer as WPT
 wpt = WPT() # word punctuation tokenizer
 
 # path for dataset
-fd_path = '../Filtered_Dataset'
-rd_path = '../Preprocessed_Dataset'
+fd_path = '../../Filtered_Dataset'
+rd_path = '../../Preprocessed_Dataset'
 
 # toggle debugging here
 debugging = True
-
-filenames = []
 
 def get_label(rating):
     if rating > 2.0:    # change this for experimentation
@@ -67,7 +65,7 @@ def remove_stop_words(list_of_words):
     discarded_words = ['no','not','nor']
     for dw in discarded_words:
         stop.discard(dw)
-    return [x.lower() for x in list_of_words if x.lower() not in stopwords]
+    return [x.lower() for x in list_of_words if x.lower() not in stop]
 
 # remove all the extra ascii characters
 # check for the case where a word contains all non ascii characters
@@ -273,7 +271,7 @@ def preprocess(filename):
 
     fobj = open(fd_path+'/'+filename,'r')
     summary = eval(fobj.readline())
-    ratings = eval(fobj.readline())
+    ratings = np.array(eval(fobj.readline()))
     reviews = eval(fobj.readline())
     fobj.close()
 
@@ -285,7 +283,7 @@ def preprocess(filename):
     for i in range(no_of_reviews):
         label = get_label(ratings[i])
         if label == 'pos':
-            pos_rev+=1
+            p_rev+=1
         cur_rat[int(ratings[i])]+=1
         review = reviews[i]
         mobile_corpus.append([tag_filter(remove_stop_words(extra_ascii_removal(word_tokenization(review)))),label])
@@ -296,13 +294,7 @@ def preprocess(filename):
     robj.close()
 
     if debugging:
-        print "Total reviews :",no_of_reviews
-        print "positive :",p_rev
-        print "negative :",no_of_reviews-p_rev
-        print "Ratings :"
-        for i in range(5,-1,-1):
-            print i,':',cur_rat[i]
-        print "------------------------------"
+        print " tot : %3d pos : %3d neg : %3d"%(no_of_reviews,p_rev,no_of_reviews-p_rev)," ",cur_rat
 
     return (cur_rat,no_of_reviews, p_rev, no_of_reviews-p_rev)
 
@@ -321,6 +313,7 @@ if __name__ == "__main__":
     if debugging:
         print "Listing file names..."
     filenames = os.listdir(fd_path)
+    total_files = len(filenames)
 
     # creating directory for result dataset
     if debugging:
@@ -338,16 +331,18 @@ if __name__ == "__main__":
     # performing preprocessing for each file
     if debugging:
         print "Preprocessing..."
-    for filename in filenames:
-        (cr,x,y,z) = preprocessed(filename)
-        tot_rat = cr
+    for i in range(total_files):
+        print "[ %3.2f %% ]"%(float(i)*100/total_files),
+        (cr,x,y,z) = preprocess(filenames[i])
+        tot_rat += cr
         tot_rev += x
         pos_rev += y
         neg_rev += z
 
+    print "-----------------"
     print "Done!"
     print "Time taken : %.2f sec(s)"%(timeit.default_timer()-start)
-    print ""
+    print "-----------------"
     print "Total reviews :",tot_rev
     print "positive :",pos_rev
     print "negative :",neg_rev
