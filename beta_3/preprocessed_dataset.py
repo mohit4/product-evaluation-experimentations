@@ -17,7 +17,7 @@ filtered dataset in order to achieve the following
 Work on :
     1. remove words that contain all ascii extras
     2. do lemmatization
-
+    3. work on expanding abbreviations such as 've -> have, n't -> not
 """
 
 # add your credits here
@@ -267,7 +267,7 @@ def tag_filter(list_of_words):
 def preprocess(filename):
 
     if debugging:
-        print filename+'...'
+        print filename+'...',
 
     fobj = open(fd_path+'/'+filename,'r')
     summary = eval(fobj.readline())
@@ -286,7 +286,7 @@ def preprocess(filename):
             p_rev+=1
         cur_rat[int(ratings[i])]+=1
         review = reviews[i]
-        mobile_corpus.append([tag_filter(remove_stop_words(extra_ascii_removal(word_tokenization(review)))),label])
+        mobile_corpus.append((tag_filter(remove_stop_words(extra_ascii_removal(word_tokenization(review)))),label))
 
     # finally putting up everything into file
     robj = open(rd_path+'/'+filename,'w')
@@ -332,7 +332,7 @@ if __name__ == "__main__":
     if debugging:
         print "Preprocessing..."
     for i in range(total_files):
-        print "[ %3.2f %% ]"%(float(i)*100/total_files),
+        print "[ %3d %% ]"%(i*100/total_files),
         (cr,x,y,z) = preprocess(filenames[i])
         tot_rat += cr
         tot_rev += x
