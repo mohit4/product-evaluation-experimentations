@@ -1,4 +1,6 @@
 # Product Evaluation Engine
+*This ReadMe was updated on 17-4-2017*
+*Don't rely on the ReadMe if it's more than 3 days old.*
 
 ### About
 Product Evaluation Engine is a set of scripts processing the collected online reviews of products from websites of usually e-commerce space. PEE processes these comments taken in text form and using Natural Language Processing and many other techniques in order to achieve the following.
