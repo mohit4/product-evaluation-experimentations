@@ -10,16 +10,28 @@ filtered dataset in order to achieve the following
 2. Tokenization                                 DONE
 3. Small words filtered and all_extras removed  DONE
 4. Part of Speech Tagging                       DONE
-5. *Subjectivity and objectivity
-6. *Feature extraction
+5. Lemmatization                                ????
+6. *Subjectivity and objectivity                --
+7. *Feature extraction                          --
+
+Work on :
+    1. remove words that contain all ascii extras
+    2. do lemmatization
 
 """
 
 # add your credits here
+__author__ = "Mohit Kumar"
+__version__ = "0.9.3"   # beta 3
+__maintainer__ = "Mohit Kumar"
+__email__ = "mohitkumar2801@gmail.com"
+__status__ = "Production"
 
 import nltk
 import sys
 import os
+import timeit
+import numpy as np
 
 from nltk.corpus import stopwords
 stop = set(stopwords.words('english'))
@@ -29,6 +41,9 @@ wpt = WPT() # word punctuation tokenizer
 # path for dataset
 fd_path = '../Filtered_Dataset'
 rd_path = '../Preprocessed_Dataset'
+
+# toggle debugging here
+debugging = True
 
 filenames = []
 
@@ -250,16 +265,28 @@ def tag_filter(list_of_words):
             res.append(tags[i])
     return res
 
+# does all the work
 def preprocess(filename):
+
+    if debugging:
+        print filename+'...'
+
     fobj = open(fd_path+'/'+filename,'r')
     summary = eval(fobj.readline())
     ratings = eval(fobj.readline())
     reviews = eval(fobj.readline())
     fobj.close()
+
     no_of_reviews = len(ratings)
+    cur_rat = np.array([0,0,0,0,0,0])
+    p_rev = 0 # to store no of positive reviews, calculate neg rev by subtraction
     mobile_corpus = []
+
     for i in range(no_of_reviews):
         label = get_label(ratings[i])
+        if label == 'pos':
+            pos_rev+=1
+        cur_rat[int(ratings[i])]+=1
         review = reviews[i]
         mobile_corpus.append([tag_filter(remove_stop_words(extra_ascii_removal(word_tokenization(review)))),label])
 
@@ -267,6 +294,17 @@ def preprocess(filename):
     robj = open(rd_path+'/'+filename,'w')
     robj.write(str(mobile_corpus))
     robj.close()
+
+    if debugging:
+        print "Total reviews :",no_of_reviews
+        print "positive :",p_rev
+        print "negative :",no_of_reviews-p_rev
+        print "Ratings :"
+        for i in range(5,-1,-1):
+            print i,':',cur_rat[i]
+        print "------------------------------"
+
+    return (cur_rat,no_of_reviews, p_rev, no_of_reviews-p_rev)
 
 if __name__ == "__main__":
 
@@ -280,12 +318,39 @@ if __name__ == "__main__":
         sys.exit()
 
     # fetching the filenames
+    if debugging:
+        print "Listing file names..."
     filenames = os.listdir(fd_path)
 
     # creating directory for result dataset
+    if debugging:
+        print "Setting up result directory..."
     if not os.path.isdir(rd_path):
         os.mkdir(rd_path)
 
+    # to calculate the total time taken
+    start = timeit.default_timer()
+
+    # for status
+    tot_rat = np.array([0,0,0,0,0,0])
+    tot_rev, pos_rev, neg_rev = 0,0,0
+
     # performing preprocessing for each file
+    if debugging:
+        print "Preprocessing..."
     for filename in filenames:
-        preprocessed(filename)
+        (cr,x,y,z) = preprocessed(filename)
+        tot_rat = cr
+        tot_rev += x
+        pos_rev += y
+        neg_rev += z
+
+    print "Done!"
+    print "Time taken : %.2f sec(s)"%(timeit.default_timer()-start)
+    print ""
+    print "Total reviews :",tot_rev
+    print "positive :",pos_rev
+    print "negative :",neg_rev
+    print "Ratings :"
+    for i in range(5,-1,-1):
+        print i,':',tot_rat[i]
