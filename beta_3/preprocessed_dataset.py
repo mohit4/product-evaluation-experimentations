@@ -6,10 +6,10 @@ April 25, 2017 Tuesday 5:47 pm
 This script is used to preprocess the already
 filtered dataset in order to achieve the following
 
-1. Stop words removal
-2. Tokenization
-3. Small words filtered and all_extras removed
-4. Part of Speech Tagging
+1. Stop words removal                           DONE
+2. Tokenization                                 DONE
+3. Small words filtered and all_extras removed  DONE
+4. Part of Speech Tagging                       DONE
 5. *Subjectivity and objectivity
 6. *Feature extraction
 
@@ -55,6 +55,7 @@ def remove_stop_words(list_of_words):
     return [x.lower() for x in list_of_words if x.lower() not in stopwords]
 
 # remove all the extra ascii characters
+# check for the case where a word contains all non ascii characters
 def extra_ascii_removal(list_of_words):
     l = len(list_of_words)
     for i in range(l):
@@ -242,23 +243,30 @@ how however whence whenever where whereby whereever wherein whereof why
 def tag_filter(list_of_words):
     allowed_tags = ['CC','DT','IN','JJ','JJR','JJS','MD','NN','NNP','NNS','PDT','RB','RBR','RBS','RP','VB','VBD','VBG','VBN','VBP','VBZ','']
     tags = nltk.pos_tag(list_of_words)
+    res = []
     l = len(list_of_words)
     for i in range(l):
-        if tags[i][1] not in allowed_tags:
-            list_of_words.remove(list_of_words[i])
-    return list_of_words
+        if tags[i][1] in allowed_tags:
+            res.append(tags[i])
+    return res
 
 def preprocess(filename):
-    fobj = open(filename,'r')
+    fobj = open(fd_path+'/'+filename,'r')
     summary = eval(fobj.readline())
     ratings = eval(fobj.readline())
     reviews = eval(fobj.readline())
+    fobj.close()
     no_of_reviews = len(ratings)
+    mobile_corpus = []
     for i in range(no_of_reviews):
         label = get_label(ratings[i])
         review = reviews[i]
-        tokens = extra_ascii_removal(word_tokenization(review))
+        mobile_corpus.append([tag_filter(remove_stop_words(extra_ascii_removal(word_tokenization(review)))),label])
 
+    # finally putting up everything into file
+    robj = open(rd_path+'/'+filename,'w')
+    robj.write(str(mobile_corpus))
+    robj.close()
 
 if __name__ == "__main__":
 
