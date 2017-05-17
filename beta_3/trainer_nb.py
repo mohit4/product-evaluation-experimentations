@@ -85,27 +85,29 @@ if __name__ == "__main__":
 
     print "Evaluating features..."
     # taking most frequent first words
-    no_of_features = 2000
+    no_of_features = 200
     word_features = nltk.FreqDist(all_words).keys()[:no_of_features]
     fobj2 = open('most_frequent_features.txt','w')
     fobj2.write(str(word_features))
     fobj2.close()
     print "done"
-
     # all features
+
     feature_set = [(document_features(d),c) for (d,c) in dataset]
 
     # ratio for training to testing
-    train_set = 0.20
+    train_set = 0.80
     test_set = 0.20
 
     print "training classifier..."
     # classifier
-    classifier = NBC.train(feature_set[:train_set*len(feature_set)])
+    classifier = NBC.train(feature_set[:int(train_set*len(feature_set))])
+    # classifier = NBC.train(feature_set[:200])
     print "done"
 
     # testing
-    acc = nltk.classify.accuracy(classifier, feature_set[test_set*len(feature_set):])
+    acc = nltk.classify.accuracy(classifier, feature_set[int(test_set*len(feature_set)):])
+    # acc = nltk.classify.accuracy(classifier, feature_set[201:800])
     print "accuracy :",acc
 
     # saving classifier
