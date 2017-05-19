@@ -9,6 +9,9 @@ sent_tok = nltk.data.load('tokenizers/punkt/english.pickle')
 # this is the word tokenizer
 from nltk.tokenize import word_tokenize
 
+# for fetching adjective scores
+from nltk.corpus import sentiwordnet as swn
+
 # for lemmatization
 from nltk.stem.wordnet import WordNetLemmatizer as WNL
 wnl = WNL()
@@ -99,9 +102,84 @@ def high_adjective_count(reviews):
     potential_features = {}
     for noun in noun_score_map:
         if noun_score_map[noun] >= threshold:
-            potential_features[noun] = noun_score_map[noun]#threshold
+            # potential_features[noun] = noun_score_map[noun]#threshold
+            potential_features[noun] = threshold
     # potential_features = {key:noun_score_map[key] for key in noun_score_map if noun_score_map[key] > threshold}
     return potential_features
+
+# for demo purpose only ... replace it with an effective solution
+inversion_words = ['not',"n't",'neither','no','nor',"don't","didn't",'never',"hasn't","haven't","can't","couldn't"]
+
+# adding code for feature ranking algorithm
+def rank_features(potential_features,reviews):
+    global_noun_scores = {}
+    global_noun_adjective_count = {}
+    for review in reviews:
+        review_noun_scores = {}
+        review_noun_adjective_count = {}
+        sentences = [transform([x.lower() for x in nltk.word_tokenize(sentence) if len(x)>=3]) for sentence in sent_tok.tokenize(review)]
+        for sentence in sentences:
+            # maintaining a left context of 2 words
+            left_context = []
+            sentence_score = 0
+            l = len(sentence)
+            for i in range(l):
+                if sentence[i][1].startswith('J'):  # if adjective
+                    try:
+                        word = swn.senti_synset(sentence[i][0]+'.a.01')
+                        if word.pos_score > word.neg_score():
+                            score =  word.pos_score() # sentiwordnet score here
+                        else:
+                            score = -1 * word.neg_score()
+                    except:
+                        score = 0.0
+
+                    # maintaining left context
+                    if i == 0:
+                        left_context = []
+                    elif i == 1:
+                        left_context = [sentence[0]]
+                    else:
+                        left_context = [sentence[i-2],sentence[i-1]]
+
+                    for iw in left_context:
+                        if iw in inversion_words:
+                            score = -1 * score
+                            break
+
+                    cl_n_i = closest_noun(sentence,i)
+                    if cl_n_i >= l or cl_n_i < 0:
+                        cl_noun = "this_product"
+                    else:
+                        cl_noun = sentence[cl_n_i][0]
+                    if not review_noun_scores.has_key(cl_noun):
+                        review_noun_scores[cl_noun]=0
+                    review_noun_scores[cl_noun]+=1
+                    if not review_noun_adjective_count.has_key(cl_noun):
+                        review_noun_adjective_count[cl_noun]=0
+                    review_noun_adjective_count[cl_noun]+=1
+
+                    if not global_noun_scores.has_key(cl_noun):
+                        global_noun_scores[cl_noun]=0
+                    global_noun_scores[cl_noun]+=1
+                    if not global_noun_adjective_count.has_key(cl_noun):
+                        global_noun_adjective_count[cl_noun]=0
+                    global_noun_adjective_count[cl_noun]+=1
+
+                    sentence_score += score
+
+        total_score = sum(review_noun_scores.values())
+        total_adjectives = sum(review_noun_adjective_count.values())
+        avg_score = total_score/total_adjectives
+        # if avg_score > 0:
+        #     # review is positive
+        # else:
+        #     # review is negative
+
+    avg_feature_score = {}
+    for noun in global_noun_scores:
+        avg_feature_score[noun] = global_noun_scores[noun]/global_noun_adjective_count[noun]
+    return avg_feature_score
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
@@ -109,3 +187,8 @@ if __name__ == "__main__":
     reviews = fetch_data(filename)
     pt = high_adjective_count(reviews)
     print pt
+    print '---'*10
+
+    feature_scores = rank_features(pt,reviews)
+    for i in feature_scores:
+        print i,'-',feature_scores[i]
