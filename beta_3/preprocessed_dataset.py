@@ -65,8 +65,8 @@ def remove_stop_words(list_of_words):
     discarded_words = ['no','not','nor']
     for dw in discarded_words:
         stop.discard(dw)
-    return [x.lower() for x in list_of_words if x.lower() not in stop]
 
+    return [x.lower() for x in list_of_words if x.lower() not in stop]
 # remove all the extra ascii characters
 # check for the case where a word contains all non ascii characters
 def extra_ascii_removal(list_of_words):

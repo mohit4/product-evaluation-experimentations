@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
     print "Evaluating features..."
     # taking most frequent first words
-    no_of_features = 200
+    no_of_features = 1000
     word_features = nltk.FreqDist(all_words).keys()[:no_of_features]
     fobj2 = open('most_frequent_features.txt','w')
     fobj2.write(str(word_features))
