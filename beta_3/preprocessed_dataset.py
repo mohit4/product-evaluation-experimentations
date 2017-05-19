@@ -286,7 +286,11 @@ def preprocess(filename):
             p_rev+=1
         cur_rat[int(ratings[i])]+=1
         review = reviews[i]
-        mobile_corpus.append((tag_filter(remove_stop_words(extra_ascii_removal(word_tokenization(review)))),label))
+        # default word tokenizer
+        # mobile_corpus.append((tag_filter(remove_stop_words(extra_ascii_removal(word_tokenization(review)))),label))
+
+        # word punctuation tokenizer
+        mobile_corpus.append((tag_filter(remove_stop_words(extra_ascii_removal(wpt_tokenization(review)))),label))
 
     # finally putting up everything into file
     robj = open(rd_path+'/'+filename,'w')
