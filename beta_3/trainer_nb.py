@@ -116,3 +116,6 @@ if __name__ == "__main__":
 
     # Done
     print "Done!"
+
+    # for playing notification sound after code ends
+    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 2, 1000))

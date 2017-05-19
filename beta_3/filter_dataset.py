@@ -96,3 +96,6 @@ if __name__ == "__main__":
 
 		print "Done!"
 		print "Total products :",count
+
+		# for playing notification sound after code ends
+	    os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % ( 2, 1000))
