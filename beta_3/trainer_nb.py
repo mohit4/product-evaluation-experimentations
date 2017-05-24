@@ -32,8 +32,8 @@ rd_path = '../../Preprocessed_Dataset'
 id_path = '../../Feature_Dataset'
 
 # to save the classifier for later use
-def save_classifier(classifier):
-    f = open('naive_bayes_classifier.pickle','wb')
+def save_classifier(classifier,filename):
+    f = open(filename+'.pickle','wb')
     pickle.dump(classifier,f)
     f.close()
     print "classifier saved!"
